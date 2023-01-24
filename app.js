@@ -10,7 +10,6 @@ require('dotenv').config()
 
 let db = "mongodb+srv://adminjon:adminjon123@cluster0.620bas9.mongodb.net/PP-App?retryWrites=true&w=majority"
 
-console.log(variabletest)
 mongoose.connect(db, {
   useNewUrlParser: true,
   useUnifiedTopology: true
