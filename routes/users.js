@@ -89,7 +89,7 @@ router.post('/predlagajprojekt', (req, res) => {
   let newProject = new projectModel({
     naslovprojekta: data.naslovprojekta,
     opisprojekta: data.opisprojekta,
-    ocenjenavrednostprojekta: Number(data.ocenjenavrednostprojekta),
+    ocenjenavrednostprojekta: data.ocenjenavrednostprojekta,
     lokacijaprojekta: data.lokacijaprojekta,
     latprojekta: data.latprojekta,
     lngprojekta: data.lngprojekta,
