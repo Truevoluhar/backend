@@ -6,6 +6,8 @@ var projectModel = require('../models/projectmodel')
 var settingsModel = require('../models/settingsmodel')
 var newsModel = require('../models/newsmodel')
 var pingerModel = require('../models/pingermodel')
+var bcrypt = require('bcrypt')
+
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -19,9 +21,10 @@ router.post('/register', async (req, res) => {
     res.json('Uporabnik s tem uporabniškim imenom že obstaja.')
   } else {
     if (data.password === data.checkpassword) {
+      const hashPassword = await bcrypt.hash(data.password, 12)
       let newUser = new userModel({
         username: data.username,
-        password: data.password,
+        password: hashPassword,
         status: data.status,
         glasovi: 3
       })
@@ -41,8 +44,9 @@ router.post('/login', async function(req, res) {
   let data = req.body.data
   console.log(data)
   let user = await userModel.find({ username: data.username })
+  let isMatch = await bcrypt.compare(data.password, user.password)
   if (user.length > 0) {
-    if (data.password === user[0].password) {
+    if (isMatch) {
       let newSession = new sessionModel({
         loggedUser: data.username,
         createdAt: new Date()
@@ -86,7 +90,7 @@ router.post('/predlagajprojekt', (req, res) => {
   let newProject = new projectModel({
     naslovprojekta: data.naslovprojekta,
     opisprojekta: data.opisprojekta,
-    ocenjenavrednostprojekta: data.ocenjenavrednostprojekta,
+    ocenjenavrednostprojekta: Number(data.ocenjenavrednostprojekta),
     lokacijaprojekta: data.lokacijaprojekta,
     latprojekta: data.latprojekta,
     lngprojekta: data.lngprojekta,
@@ -115,7 +119,6 @@ router.post('/uploadimage', async (req, res) => {
     } else {
       // Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
       let avatar = req.files.avatar
-
       // Use the mv() method to place the file in the upload directory (i.e. "uploads")
       avatar.mv('./images/' + avatar.name)
 
