@@ -42,10 +42,10 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async function(req, res) {
   let data = req.body.data
-  console.log(data)
   let user = await userModel.find({ username: data.username })
+  const isMatch = await bcrypt.compare(user.password, data.password)
   if (user.length > 0) {
-    if (data.password === user[0].password) {
+    if (isMatch) {
       let newSession = new sessionModel({
         loggedUser: data.username,
         createdAt: new Date()
